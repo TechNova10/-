@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TechNova — Painel Administrativo</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.admin-shell{min-height:100vh;background:#070b10;color:#f4f7fb}.admin-head{height:72px;border-bottom:1px solid #202934;background:#0b1118;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:20}.admin-logo{font-weight:900;font-size:22px}.admin-logo span{color:#2b8cff}.admin-body{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 72px)}.admin-side{background:#091019;border-right:1px solid #202934;padding:18px 12px}.admin-side button{width:100%;padding:12px;margin:3px 0;text-align:left;background:transparent;border:0;color:#9da9b7;border-radius:8px;cursor:pointer}.admin-side button.active,.admin-side button:hover{background:#10213a;color:#fff}.admin-main{padding:28px;max-width:1400px;width:100%;box-sizing:border-box}.admin-panel{display:none}.admin-panel.active{display:block}.admin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.admin-card{background:#0c141d;border:1px solid #222e3a;border-radius:12px;padding:18px}.admin-card h3{margin:0 0 7px}.admin-stat{font-size:28px;font-weight:900}.admin-table{width:100%;border-collapse:collapse;background:#0c141d;border:1px solid #222e3a;border-radius:12px;overflow:hidden}.admin-table th,.admin-table td{padding:12px;border-bottom:1px solid #202a34;text-align:left;font-size:13px}.admin-table th{color:#9da9b7}.admin-form{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;background:#0c141d;border:1px solid #222e3a;padding:18px;border-radius:12px}.admin-form .full{grid-column:1/-1}.admin-input,.admin-select{width:100%;box-sizing:border-box;padding:11px;background:#080d13;color:#fff;border:1px solid #2b3744;border-radius:7px}.admin-label{font-size:12px;color:#aab4c0;display:block;margin-bottom:5px}.admin-actions{display:flex;gap:8px;flex-wrap:wrap}.admin-btn{border:1px solid #2b4057;background:#10233a;color:#fff;padding:9px 12px;border-radius:7px;cursor:pointer}.admin-btn.primary{background:#086cff;border-color:#086cff}.admin-btn.danger{background:#34141a;border-color:#67303a}.admin-muted{color:#8995a3;font-size:12px}.coupon-list{display:grid;gap:10px;margin-top:15px}.coupon-row{display:flex;justify-content:space-between;align-items:center;gap:15px;background:#0c141d;border:1px solid #222e3a;border-radius:10px;padding:14px}.badge{display:inline-block;padding:4px 7px;border-radius:5px;background:#123d2a;color:#67e3a1;font-size:11px}.badge.expired{background:#3a1820;color:#ff7683}.banner-preview{width:100%;height:220px;object-fit:cover;border-radius:10px;background:#0a0f15;border:1px dashed #334252}.admin-notice{background:#13233a;border:1px solid #28527e;padding:12px;border-radius:8px;margin-bottom:15px}.admin-toast{position:fixed;right:20px;bottom:20px;background:#10243b;border:1px solid #2865a0;color:#fff;padding:12px 16px;border-radius:8px;z-index:100}
+@media(max-width:900px){.admin-body{grid-template-columns:1fr}.admin-side{display:flex;overflow:auto}.admin-side button{min-width:max-content}.admin-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.admin-grid,.admin-form{grid-template-columns:1fr}.admin-main{padding:16px}}
+.admin-auth-overlay{position:fixed;inset:0;background:radial-gradient(circle at 50% 10%,#10294a 0,#070b10 45%,#05080b 100%);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px}.admin-auth-card{width:min(420px,100%);box-sizing:border-box;background:#0c141d;border:1px solid #263849;border-radius:14px;padding:28px;box-shadow:0 25px 80px #000b}.admin-auth-card h1{margin:18px 0 6px}.admin-auth-card p{color:#8e9baa;font-size:13px}.admin-auth-card .admin-input{margin:7px 0}.admin-auth-error{min-height:18px;color:#ff6678;font-size:12px}.admin-auth-overlay.hidden{display:none}.admin-head-actions{display:flex;align-items:center;gap:10px}
+</style>
+</head>
+<body>
+<div id="adminLoginOverlay" class="admin-auth-overlay">
+  <div class="admin-auth-card">
+    <div class="admin-logo">Tech<span>Nova</span> <small>Admin</small></div>
+    <h1>Acesso administrativo</h1><p>Entre com seu e-mail e senha de administrador.</p>
+    <input id="adminLoginEmail" class="admin-input" type="email" placeholder="E-mail" value="zadaxxgb@gmail.com">
+    <input id="adminLoginPassword" class="admin-input" type="password" placeholder="Senha">
+    <div id="adminLoginError" class="admin-auth-error"></div>
+    <button class="admin-btn primary" style="width:100%" onclick="adminLogin()">Entrar</button>
+  </div>
+</div>
+<div class="admin-shell">
+<header class="admin-head"><div class="admin-logo">Tech<span>Nova</span> <small>Admin</small></div><div class="admin-head-actions"><span class="admin-muted" id="adminLoggedAs">Painel administrativo</span><button class="admin-btn" onclick="adminLogout()">Sair</button></div></header>
+<div class="admin-body">
+<aside class="admin-side">
+<button class="active" data-panel="dashboard">📊 Dashboard</button>
+<button data-panel="banners">🖼️ Banners da loja</button>
+<button data-panel="products">📦 Produtos e estoque</button>
+<button data-panel="orders">🧾 Pedidos</button>
+<button data-panel="coupons">🎟️ Cupons</button>
+<button data-panel="settings">⚙️ Configurações</button>
+</aside>
+<main class="admin-main">
+<section id="dashboard" class="admin-panel active">
+<h1>Visão geral</h1><div id="adminNotice"></div>
+<div class="admin-grid" id="stats"></div>
+<h2>Pedidos recentes</h2><div id="recentOrders"></div>
+</section>
+
+<section id="banners" class="admin-panel">
+<h1>Banners da loja</h1>
+<div class="admin-card">
+<label class="admin-label">Escolher novo banner</label><input id="bannerFile" class="admin-input" type="file" accept="image/*">
+<p class="admin-muted">O banner será salvo neste navegador e usado no início da loja.</p>
+<img id="bannerPreview" class="banner-preview" alt="Prévia do banner">
+<div class="admin-actions" style="margin-top:12px"><button class="admin-btn primary" onclick="saveBanner()">Salvar banner</button><button class="admin-btn danger" onclick="removeBanner()">Remover banner</button></div>
+</div></section>
+
+<section id="products" class="admin-panel">
+<h1>Produtos e estoque</h1>
+<div class="admin-form product-form">
+<div><label class="admin-label">Nome do produto</label><select id="prodCategory"><option value="hardware">Hardware</option><option value="perifericos">Periféricos</option><option value="computadores">Computadores</option><option value="gamer" selected>Gamer</option><option value="mobile">Periféricos Mobile</option></select>\n      <input id="prodName" class="admin-input" placeholder="Ex.: Mouse RGB Gamer"></div>
+<div><label class="admin-label">Preço (R$)</label><input id="prodPrice" class="admin-input" type="number" step="0.01"></div>
+<div><label class="admin-label">Preço antigo (R$)</label><input id="prodOld" class="admin-input" type="number" step="0.01"></div>
+<div><label class="admin-label">Estoque</label><input id="prodStock" class="admin-input" type="number" min="0" value="20"></div>
+<div><label class="admin-label">Avaliação</label><input id="prodRating" class="admin-input" type="number" min="0" max="5" step="0.1" value="5"></div>
+<div><label class="admin-label">Quantidade de avaliações</label><input id="prodReviews" class="admin-input" type="number" min="0" value="0"></div>
+<div><label class="admin-label">Quantidade vendidos</label><input id="prodSold" class="admin-input" type="number" min="0" value="0"></div>
+<div><label class="admin-label">Desconto exibido</label><input id="prodDiscount" class="admin-input" placeholder="-10%"></div>
+<div class="full"><label class="admin-label">Descrição</label><textarea id="prodDescription" class="admin-input" style="min-height:100px;resize:vertical" placeholder="Descrição do produto"></textarea></div>
+<div class="full"><label class="admin-label">Imagem do produto</label>
+<input id="prodImage" class="admin-input" type="file" accept="image/*" onchange="previewProductImage(event)">
+<div id="prodImagePreview" class="product-image-preview" aria-label="Prévia da imagem do produto"></div>
+<p class="admin-muted">A imagem ficará salva no produto e aparecerá automaticamente na loja e nos detalhes.</p>
+</div>
+<div><label class="admin-label">Ícone/emoji (se não houver imagem)</label><input id="prodArt" class="admin-input" placeholder="🖱️"></div>
+<div class="full admin-actions">
+<button class="admin-btn primary" onclick="saveProduct()">Criar produto</button>
+<button class="admin-btn" onclick="clearProductForm()">Limpar</button>
+</div>
+</div>
+<h2>Produtos cadastrados</h2>
+<div id="productTable"></div>
+</section>
+
+<section id="orders" class="admin-panel">
+<h1>Pedidos</h1><div id="ordersTable"></div>
+</section>
+
+<section id="coupons" class="admin-panel">
+<h1>Cupons</h1>
+<div class="admin-form">
+<div><label class="admin-label">Código</label><input id="couponCode" class="admin-input" value="TECH10"></div>
+<div><label class="admin-label">Tipo</label><select id="couponType" class="admin-select"><option value="percentage">Porcentagem</option><option value="fixed">Valor fixo</option></select></div>
+<div><label class="admin-label">Desconto</label><input id="couponDiscount" class="admin-input" type="number" value="10"></div>
+<div><label class="admin-label">Uso máximo</label><input id="couponMaxUses" class="admin-input" type="number" value="100"></div>
+<div><label class="admin-label">Validade</label><input id="couponExpiry" class="admin-input" type="date" value="2026-09-30"></div>
+<div><label class="admin-label">Valor mínimo (R$)</label><input id="couponMinValue" class="admin-input" type="number" value="100"></div>
+<div><label><input id="couponFirstPurchase" type="checkbox"> Cupom de primeira compra</label></div>
+<div><label><input id="couponExclusive" type="checkbox"> Cupom exclusivo</label></div>
+<div><label class="admin-label">Limite por cliente</label><input id="couponPerCustomer" class="admin-input" type="number" value="1" min="1"></div>
+<div class="full admin-actions"><button class="admin-btn primary" onclick="saveCoupon()">Criar / salvar cupom</button><button class="admin-btn" onclick="clearCouponForm()">Limpar</button></div>
+</div>
+<div id="couponList" class="coupon-list"></div>
+</section>
+
+<section id="settings" class="admin-panel"><h1>Configurações e administradores</h1>
+<div id="ownerOnlyArea"><div class="admin-notice"><b>Área exclusiva do proprietário</b><br><span class="admin-muted">Somente zadaxxgb@gmail.com pode adicionar ou excluir administradores.</span></div>
+<div class="admin-form"><div><label class="admin-label">Nome do administrador</label><input id="newAdminName" class="admin-input" placeholder="Nome"></div>
+<div><label class="admin-label">E-mail do administrador</label><input id="newAdminEmail" class="admin-input" type="email" placeholder="admin@technova.com"></div>
+<div><label class="admin-label">Senha</label><input id="newAdminPassword" class="admin-input" type="password" placeholder="Mínimo de 6 caracteres"></div>
+<div class="full admin-actions"><button class="admin-btn primary" onclick="addAdmin()">Adicionar administrador</button></div></div>
+<h2>Administradores cadastrados</h2><div id="adminUsersTable"></div></div>
+<div id="adminRestrictedArea" class="admin-card" style="display:none"><h3>Acesso restrito</h3><p class="admin-muted">Apenas o proprietário pode gerenciar a lista.</p></div></section>
+</main></div></div>
+<script src="config.js"></script><script src="app.js"></script><script src="admin.js"></script>
+</body></html>

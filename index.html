@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechNova — Tecnologia que eleva seu jogo</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="toast"></div>
+
+<header>
+  <div class="topbar">
+    <div><span>◉</span> Enviado de Manaus-AM</div>
+    <div><span>♙</span> Compra segura</div>
+    <div><span>◇</span> Estoque sempre atualizado</div>
+    <div class="top-spacer"></div>
+    <div>◔ Suporte online</div>
+    <div>◉ <a href="tel:+5592993104032">(92) 99310-4032</a></div>
+  </div>
+
+  <div class="mainbar">
+    <a class="brand" href="#home">
+      <div class="brand-mark">T</div>
+      <div><strong>TECH<span>NOVA</span></strong><small>TECNOLOGIA QUE ELEVA SEU JOGO</small></div>
+    </a>
+
+    <div class="search-wrap">
+      <input id="searchInput" placeholder="Buscar produtos..." oninput="renderProducts()">
+      <button onclick="renderProducts()">⌕</button>
+    </div>
+
+    <div class="head-actions">
+      <button class="head-action" onclick="go('#notifications')">♧<span class="badge" id="notifBadge">0</span><small>Notificações</small></button>
+      <button class="head-action" onclick="showFavorites()">♡<small>Favoritos</small></button>
+      <button class="head-action cart-head" onclick="go('#cart')">🛒<span class="badge" id="cartBadge">0</span><small>Carrinho</small><em id="cartTotal">R$ 0,00</em></button>
+      <div class="user-area" onmouseenter="openUserMenu()" onmouseleave="scheduleUserMenuClose()">
+        <button id="userButton" class="user-button" onclick="toggleLoginOrMenu()">◉ <span id="userName">Entrar / Cadastrar-se</span>⌄</button>
+        <div id="userMenu" class="user-menu" onmouseenter="cancelUserMenuClose()" onmouseleave="scheduleUserMenuClose()">
+          <button onclick="go('#account');closeUserMenu()">Minha conta</button>
+          <button onclick="go('#orders');closeUserMenu()">Minhas compras</button>
+          <button onclick="logout()">Sair</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <button class="categories" onclick="document.body.classList.toggle('show-cats')">☰ &nbsp; Todas as categorias⌄</button>
+    <a href="#home">🎮 Gamer</a>
+    <a href="#home">▣ Celulares</a>
+    <a href="#home">▱ Periféricos</a>
+    <a href="#home">▣ Hardware</a>
+    <a href="#home">♧ Acessórios</a>
+    <a href="#home">▭ Monitores</a>
+    <a class="promo" href="#home">◇ Promoções</a>
+  </nav>
+</header>
+
+<main>
+  <section id="home" class="page">
+    <div class="hero" aria-label="Banner promocional TechNova"></div>
+    <section class="category-buttons" aria-label="Categorias principais">
+      <button onclick="filterCategory('hardware')">HARDWARE</button>
+      <button onclick="filterCategory('perifericos')">PERIFÉRICOS</button>
+      <button onclick="filterCategory('computadores')">COMPUTADORES</button>
+      <button onclick="filterCategory('gamer')">GAMER</button>
+      <button onclick="filterCategory('mobile')">PERIFÉRICOS MOBILE</button>
+      <button onclick="filterCategory('ofertas')">OFERTAS</button>
+    </section>
+
+    <section class="content-section">
+      <div class="section-title"><h2>DESTAQUES</h2><a href="#home">Ver todos →</a></div>
+      <div id="productGrid" class="product-grid"></div>
+    </section>
+  </section>
+
+  <section id="cart" class="page hidden">
+    <div class="checkout-shell">
+      <div class="checkout-title"><span>1</span><div><h2>Carrinho de compras</h2><p>Confira seus produtos antes de continuar.</p></div></div>
+      <div id="cartItems"></div>
+      <div class="coupon-box">
+        <div><b>Cupom de descontos</b><p>Insira ou selecione um código promocional.</p></div>
+        <div class="coupon-actions"><input id="couponInput" placeholder="Digite seu cupom"><button onclick="applyCoupon()">Aplicar</button><button class="outline" onclick="openCoupons()">Selecionar códigos</button></div>
+        <div id="couponApplied"></div>
+      </div>
+      <div class="cart-summary-line"><span>Total <b id="itemsCountLabel">0 itens</b></span><strong id="cartPageTotal">R$ 0,00</strong></div>
+      <button class="primary wide" onclick="startCheckout()">Continuar</button>
+    </div>
+  </section>
+
+  <section id="checkout" class="page hidden">
+    <div class="checkout-shell">
+      <div class="checkout-title"><span>2</span><div><h2>Endereço de entrega</h2><p>Confira os dados para receber seu pedido.</p></div></div>
+      <div class="address-card">
+        <input id="addressName" placeholder="Nome completo">
+        <div class="form-grid"><input id="addressCep" placeholder="CEP"><input id="addressStreet" placeholder="Rua"><input id="addressNumber" placeholder="Número"></div>
+        <input id="addressComplement" placeholder="Complemento">
+      </div>
+
+      <div class="checkout-title"><span>3</span><div><h2>Produtos pedidos</h2></div></div>
+      <div id="checkoutProducts"></div>
+
+      <div class="checkout-options">
+        <div class="option-card"><h3>Garantia estendida</h3><label><input type="radio" name="warranty" value="0" checked onchange="updateCheckoutTotals()"> Sem garantia</label><label><input type="radio" name="warranty" value="6" onchange="updateCheckoutTotals()"> 6 meses <b>R$ 29,90</b></label><label><input type="radio" name="warranty" value="12" onchange="updateCheckoutTotals()"> 12 meses <b>R$ 49,90</b></label></div>
+        <div class="option-card"><h3>Envie mensagem para o vendedor</h3><textarea id="sellerMessage" placeholder="Digite uma mensagem (opcional)"></textarea></div>
+        <div class="option-card"><h3>Opção de envio</h3><label class="selected"><input type="radio" checked> Entrega padrão <span>Grátis</span></label><p class="arrival">Chega entre <b id="arrivalDate"></b></p></div>
+      </div>
+
+      <div class="payment-box">
+        <h3>Método de pagamento</h3>
+        <div class="payment-methods"><button class="payment active" data-method="PIX" onclick="selectPayment(this)">PIX</button><button class="payment" data-method="Cartão" onclick="selectPayment(this)">Cartão</button><button class="payment" data-method="Boleto" onclick="selectPayment(this)">Boleto</button></div>
+        <div class="totals"><div><span>Total do produto</span><b id="checkoutSubtotal">R$ 0,00</b></div><div><span>Total do frete</span><b>R$ 0,00</b></div><div><span>Desconto no PIX</span><b id="pixDiscount">- R$ 0,00</b></div><div class="grand"><span>Pagamento total</span><strong id="checkoutTotal">R$ 0,00</strong></div></div>
+        <button class="primary wide" onclick="placeOrder()">Fazer pedido</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="account" class="page hidden">
+    <div class="account-shell">
+      <div class="account-header">
+        <div class="avatar" id="accountAvatar">G</div>
+        <div class="account-heading"><h2 id="accountTitle">Minha conta</h2><p id="accountSubtitle">Gerencie seus dados e preferências.</p></div>
+        <label class="image-btn">Selecionar imagem<input id="avatarInput" type="file" accept="image/*" onchange="changeAvatar(event)" hidden></label>
+      </div>
+      <div class="account-layout">
+        <aside class="account-sidebar">
+          <button class="account-nav active" onclick="showAccountPanel('personal',this)">👤 Dados pessoais</button>
+          <button class="account-nav" onclick="showAccountPanel('payments',this)">💳 Cartões / contas bancárias</button>
+          <button class="account-nav" onclick="showAccountPanel('addresses',this)">📍 Endereços</button>
+          <button class="account-nav" onclick="showAccountPanel('security',this)">🔒 Trocar a senha</button>
+        </aside>
+        <div class="account-panels">
+          <section id="accountPanelPersonal" class="account-panel">
+            <h3>Dados pessoais</h3><p class="panel-help">Confira e altere as informações da sua conta.</p>
+            <div class="account-form-grid">
+              <div><label>Nome de usuário</label><input id="profileUsername" placeholder="Seu nome de usuário"></div>
+              <div><label>Nome</label><input id="profileName" placeholder="Nome"></div>
+              <div><label>Sobrenome</label><input id="profileSurname" placeholder="Sobrenome"></div>
+              <div><label>E-mail</label><input id="profileEmail" type="email" placeholder="seuemail@exemplo.com"></div>
+              <div><label>Telefone</label><input id="profilePhone" placeholder="Número de telefone"></div>
+              <div><label>Data de nascimento</label><input id="profileBirth" type="date"></div>
+            </div>
+            <button class="primary" onclick="saveProfile()">Salvar dados</button>
+          </section>
+
+          <section id="accountPanelPayments" class="account-panel hidden">
+            <h3>Cartões / contas bancárias</h3><p class="panel-help">Cadastre suas formas de pagamento para facilitar suas próximas compras.</p>
+            <div id="savedPaymentMethods" class="saved-list"></div>
+            <div class="payment-form-box">
+              <h4>Adicionar cartão</h4>
+              <div class="account-form-grid"><input id="cardName" placeholder="Nome no cartão"><input id="cardNumber" inputmode="numeric" placeholder="Número do cartão"><input id="cardExpiry" placeholder="Validade (MM/AA)"><input id="cardHolder" placeholder="Titular"></div>
+              <button class="primary" onclick="addCard()">Adicionar cartão</button>
+            </div>
+            <div class="payment-form-box">
+              <h4>Adicionar conta bancária</h4>
+              <div class="account-form-grid"><input id="bankName" placeholder="Banco"><input id="bankAgency" placeholder="Agência"><input id="bankAccount" placeholder="Conta"><input id="bankHolder" placeholder="Titular"></div>
+              <button class="outline" onclick="addBankAccount()">Adicionar conta bancária</button>
+            </div>
+          </section>
+
+          <section id="accountPanelAddresses" class="account-panel hidden">
+            <h3>Endereços</h3><p class="panel-help">Salve seus endereços para usar no checkout.</p>
+            <div id="savedAddresses" class="saved-list"></div>
+            <div class="payment-form-box">
+              <h4>Adicionar endereço</h4>
+              <div class="account-form-grid"><input id="addrLabel" placeholder="Salvar como: Residencial ou Comercial"><input id="addrFullName" placeholder="Nome completo"><input id="addrPhone" placeholder="Telefone"><input id="addrCep" placeholder="CEP"><input id="addrState" placeholder="Estado"><input id="addrCity" placeholder="Cidade"><input id="addrNeighborhood" placeholder="Bairro"><input id="addrStreet" placeholder="Rua/Avenida"><input id="addrNumber" placeholder="Número"><input id="addrComplement" placeholder="Complemento / Referência"><input id="addrDescription" class="grid-full" placeholder="Descrição do prédio ou casa"></div>
+              <button class="primary" onclick="addAddress()">Salvar endereço</button>
+            </div>
+          </section>
+
+          <section id="accountPanelSecurity" class="account-panel hidden">
+            <h3>Trocar a senha</h3><p class="panel-help">Digite sua senha atual e depois escolha uma nova senha.</p>
+            <div class="security-form"><label>Senha atual</label><input id="currentPassword" type="password" placeholder="Senha atual"><div id="currentPasswordError" class="auth-error"></div><label>Nova senha</label><input id="newPassword" type="password" placeholder="Mínimo de 6 caracteres"><label>Confirmar nova senha</label><input id="confirmNewPassword" type="password" placeholder="Repita a nova senha"><div id="newPasswordError" class="auth-error"></div><button class="primary" onclick="changePassword()">Trocar senha</button></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="orders" class="page hidden">
+    <div class="account-shell"><div class="section-title"><h2>Minhas compras</h2></div><div id="ordersList"></div></div>
+  </section>
+
+  <section id="tracking" class="page hidden">
+    <div class="account-shell"><div class="section-title"><h2>Acompanhar pedido</h2></div><div id="trackingBox"></div></div>
+  </section>
+
+  <section id="notifications" class="page hidden">
+    <div class="account-shell"><div class="section-title"><h2>Notificações</h2><button class="outline" onclick="markNotificationsRead()">Marcar como lidas</button></div><div id="notificationsList"></div></div>
+  </section>
+</main>
+
+<div id="loginModal" class="modal hidden">
+  <div class="modal-card auth-card">
+    <button class="modal-close" onclick="closeLogin()">×</button>
+    <div class="auth-tabs">
+      <button id="loginTabBtn" class="auth-tab active" onclick="showAuthTab('login')">Entrar</button>
+      <button id="registerTabBtn" class="auth-tab" onclick="showAuthTab('register')">Criar conta</button>
+    </div>
+    <div id="loginPane" class="auth-pane">
+      <h2>Entrar na sua conta</h2><p>Digite o e-mail e a senha.</p>
+      <label class="auth-label">E-mail</label><input id="loginEmail" class="auth-input" type="email" placeholder="seuemail@exemplo.com" oninput="validateLoginEmail()"><div id="loginEmailError" class="auth-error"></div>
+      <label class="auth-label">Senha</label><input id="loginPassword" class="auth-input" type="password" placeholder="Sua senha"><div id="loginPasswordError" class="auth-error"></div>
+      <button class="primary wide" onclick="login()">Entrar</button>
+      <button class="auth-switch" onclick="showAuthTab('register')">Ainda não tenho conta → Criar conta</button>
+    </div>
+    <div id="registerPane" class="auth-pane hidden">
+      <h2>Criar conta</h2><p>Preencha seus dados para criar sua conta TechNova.</p>
+      <label class="auth-label">Nome de usuário</label><input id="registerUsername" class="auth-input" placeholder="Como você quer aparecer no site?">
+      <div class="auth-two"><div><label class="auth-label">Seu nome</label><input id="registerName" class="auth-input" placeholder="Nome"></div><div><label class="auth-label">Sobrenome</label><input id="registerSurname" class="auth-input" placeholder="Sobrenome"></div></div>
+      <label class="auth-label">Data de nascimento</label><input id="registerBirth" class="auth-input" type="date">
+      <label class="auth-label">Número de telefone</label><input id="registerPhone" class="auth-input" type="tel" inputmode="numeric" placeholder="Somente números" oninput="validateRegisterPhone()"><div id="registerPhoneError" class="auth-error"></div>
+      <label class="auth-label">E-mail</label><input id="registerEmail" class="auth-input" type="email" placeholder="seuemail@exemplo.com" oninput="validateRegisterEmail()"><div id="registerEmailError" class="auth-error"></div>
+      <label class="auth-label">Senha</label><input id="registerPassword" class="auth-input" type="password" placeholder="Mínimo de 6 caracteres">
+      <label class="auth-label">Confirmar senha</label><input id="registerPasswordConfirm" class="auth-input" type="password" placeholder="Repita sua senha"><div id="registerPasswordError" class="auth-error"></div>
+      <button class="primary wide" onclick="createAccount()">Criar conta</button>
+      <button class="auth-switch" onclick="showAuthTab('login')">Já tenho conta → Entrar</button>
+    </div>
+    <small class="auth-note">Protótipo local: os dados ficam armazenados neste navegador.</small>
+  </div>
+</div>
+<div id="couponModal" class="modal hidden">
+  <div class="modal-card coupon-modal"><button class="modal-close" onclick="closeCoupons()">×</button><h2>Todos os cupons</h2><div class="coupon-choice" onclick="chooseCoupon('TECH10')"><b>TECH10</b><span>10% OFF em produtos selecionados</span><button>Selecionar</button></div><div class="coupon-choice" onclick="chooseCoupon('BEMVINDO15')"><b>BEMVINDO15</b><span>15% OFF na primeira compra</span><button>Selecionar</button></div><div class="coupon-choice" onclick="chooseCoupon('PIX5')"><b>PIX5</b><span>5% adicional pagando no PIX</span><button>Selecionar</button></div></div>
+</div>
+
+<footer>
+  <div><b>TECH<span>NOVA</span></b><p>Tecnologia que eleva seu jogo.</p></div>
+  <div><b>Atendimento</b><p>Suporte online · (92) 99310-4032</p></div>
+  <div><b>Informações</b><p>Compra segura</p></div>
+  <div><b>Área restrita</b><p><a href="admin.html">Acessar painel da TechNova →</a></p></div><section class="social-follow" aria-label="Redes sociais TechNova">
+  <h2>SIGA-NOS</h2>
+  <div class="social-icons">
+    <a class="social-icon youtube" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube TechNova">
+      <span>▶</span>
+    </a>
+    <a class="social-icon discord" href="https://discord.gg/AxqM6Camxh" target="_blank" rel="noopener noreferrer" aria-label="Discord TechNova">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.54 5.2A16.2 16.2 0 0 0 15.5 4l-.5 1.02a15.1 15.1 0 0 0-6 0L8.5 4a16.2 16.2 0 0 0-4.04 1.2C1.9 9.1 1.2 12.9 1.5 16.65A16.3 16.3 0 0 0 6.45 19l1.2-1.64a9.6 9.6 0 0 1-1.58-.77l.39-.3c3.06 1.43 6.36 1.43 9.38 0l.4.3c-.5.3-1.03.56-1.59.77L15.55 19a16.3 16.3 0 0 0 4.95-2.35c.36-4.35-.62-8.1-.96-11.45ZM8.5 14.3c-.92 0-1.67-.85-1.67-1.9s.74-1.9 1.67-1.9c.93 0 1.68.85 1.67 1.9 0 1.05-.74 1.9-1.67 1.9Zm7 0c-.92 0-1.67-.85-1.67-1.9s.74-1.9 1.67-1.9c.93 0 1.68.85 1.67 1.9 0 1.05-.74 1.9-1.67 1.9Z"/></svg>
+    </a>
+    <a class="social-icon instagram" href="https://www.instagram.com/technova_store0/" target="_blank" rel="noopener noreferrer" aria-label="Instagram TechNova">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 2h9.6A5.2 5.2 0 0 1 22 7.2v9.6a5.2 5.2 0 0 1-5.2 5.2H7.2A5.2 5.2 0 0 1 2 16.8V7.2A5.2 5.2 0 0 1 7.2 2Zm0 2A3.2 3.2 0 0 0 4 7.2v9.6A3.2 3.2 0 0 0 7.2 20h9.6a3.2 3.2 0 0 0 3.2-3.2V7.2A3.2 3.2 0 0 0 16.8 4H7.2Zm9.9 1.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg>
+    </a>
+  </div>
+</section>
+
+</footer>
+
+<script src="config.js"></script><script src="app.js"></script>
+</body>
+</html>
